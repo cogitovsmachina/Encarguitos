@@ -12,7 +12,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
@@ -20,7 +20,8 @@ import org.json.JSONObject;
 
 public class HomeActivity extends ActionBarActivity {
 
-    private static final String POST_SANDBOX = "http://requestb.in/1juzstn1";
+    private static final String URL = "http://requestb.in/1juzstn1";
+    private EditText edText;
     private ProgressDialog progressDialog;
     public static final JSONObject jsonObject = new JSONObject() {
         {
@@ -36,7 +37,7 @@ public class HomeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        EditText edText = (EditText)findViewById(R.id.editText);
+        edText = (EditText) findViewById(R.id.editText);
         edText.getText().toString();
 
     }
@@ -45,27 +46,24 @@ public class HomeActivity extends ActionBarActivity {
         progressDialog = ProgressDialog.show(this, "",
                 "Sending data to server");
         RequestQueue mRequestQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST, POST_SANDBOX, jsonObject,
-                new Response.Listener<JSONObject>() {
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL,
+                new Response.Listener() {
 
                     @Override
-                    public void onResponse(JSONObject response) {
-                        // do something)
-                        Log.i("***", response.toString());
+                    public void onResponse(Object response) {
+                        Toast.makeText(HomeActivity.this, "Respuesta: " + response.toString(), Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
                     }
                 }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomeActivity.this, "El pedo fué: " + error.toString(), Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
-                Log.e("***", error.getMessage());
-                Toast.makeText(HomeActivity.this, "Hubo pedos", Toast.LENGTH_LONG).show();
             }
         });
-        mRequestQueue.add(jsonObjectRequest);
-
+        mRequestQueue.add(stringRequest);
 
     }
 
