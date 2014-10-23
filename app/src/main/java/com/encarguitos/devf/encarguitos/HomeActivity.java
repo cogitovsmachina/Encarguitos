@@ -15,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -22,21 +23,14 @@ public class HomeActivity extends ActionBarActivity {
 
     private static final String POST_SANDBOX = "http://requestb.in/1juzstn1";
     private ProgressDialog progressDialog;
-    public static final JSONObject jsonObject = new JSONObject() {
-        {
-            try {
-                put("pedido", "Papitas y coca light");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+    private EditText edText;
+    protected JSONObject jsonObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        EditText edText = (EditText)findViewById(R.id.editText);
+        edText = (EditText)findViewById(R.id.editText);
         edText.getText().toString();
 
     }
@@ -44,6 +38,14 @@ public class HomeActivity extends ActionBarActivity {
     public void sendToServer(View v) {
         progressDialog = ProgressDialog.show(this, "",
                 "Sending data to server");
+
+        try {
+            jsonObject = new JSONObject();
+            jsonObject.put("pedido", edText.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         RequestQueue mRequestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST, POST_SANDBOX, jsonObject,
