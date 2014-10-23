@@ -3,7 +3,6 @@ package com.encarguitos.devf.encarguitos;
 import android.app.ProgressDialog;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,7 +14,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HomeActivity extends ActionBarActivity {
@@ -23,15 +24,6 @@ public class HomeActivity extends ActionBarActivity {
     private static final String URL = "http://requestb.in/1juzstn1";
     private EditText edText;
     private ProgressDialog progressDialog;
-    public static final JSONObject jsonObject = new JSONObject() {
-        {
-            try {
-                put("pedido", "Papitas y coca light");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +38,7 @@ public class HomeActivity extends ActionBarActivity {
         progressDialog = ProgressDialog.show(this, "",
                 "Sending data to server");
         RequestQueue mRequestQueue = Volley.newRequestQueue(this);
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener() {
 
                     @Override
@@ -62,7 +52,14 @@ public class HomeActivity extends ActionBarActivity {
                 Toast.makeText(HomeActivity.this, "El pedo fué: " + error.toString(), Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("pedido", "" + edText.getText().toString());
+                return params;
+            }
+        };
         mRequestQueue.add(stringRequest);
 
     }
